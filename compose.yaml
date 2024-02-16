@@ -1,0 +1,22 @@
+services:
+  web:
+    container_name: todo-web
+    build:
+      context: .
+      dockerfile: container/nginx/Dockerfile
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./container/nginx/conf.d:/etc/nginx/conf.d
+      - ./container/nginx/ssl:/etc/nginx/ssl
+  app:
+    container_name: todo-app
+    build:
+      context: .
+      dockerfile: container/golang/Dockerfile
+    volumes:
+      - ./source:/source
+    tty: true
