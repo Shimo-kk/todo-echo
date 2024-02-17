@@ -1,0 +1,140 @@
+openapi: 3.0.3
+info:
+  version: 0.0.1
+  title: ToDo API
+paths:
+  /api/auth/csrf:
+    get:
+      operationId: GetCsrfToken
+      tags:
+        - api/auth
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CSRFModel"
+  /api/auth/signup:
+    post:
+      operationId: SignUp
+      tags:
+        - api/auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignUpModel"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserReadModel"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DefaultResponseModel"
+        "422":
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DefaultResponseModel"
+  /api/auth/signin:
+    post:
+      operationId: SignIn
+      tags:
+        - api/auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignInModel"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserReadModel"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DefaultResponseModel"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DefaultResponseModel"
+  /api/auth/signout:
+    get:
+      operationId: SignOut
+      tags:
+        - api/auth
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DefaultResponseModel"
+
+components:
+  schemas:
+    CSRFModel:
+      type: object
+      properties:
+        csrf:
+          type: string
+      required:
+        - csrf
+    SignUpModel:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+      required:
+        - name
+        - email
+        - password
+    SignInModel:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required:
+        - email
+        - password
+    UserReadModel:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+      required:
+        - id
+        - name
+        - email
+    DefaultResponseModel:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message

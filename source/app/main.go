@@ -1,15 +1,20 @@
 package main
 
 import (
-	"net/http"
+	"log"
+	"todo/app/presentation/router"
 
+	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 )
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
 	e := echo.New()
-	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, world!")
-	})
+	router.IncludeRouter(e)
 	e.Logger.Fatal(e.Start(":8000"))
 }
