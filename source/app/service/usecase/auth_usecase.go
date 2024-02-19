@@ -16,7 +16,7 @@ type authUsecase struct {
 
 // 認証ユースケースの作成
 func NewAuthUsecase(userRepository user.IUserRepositry) IAuthUsecase {
-	return &authUsecase{userRepository}
+	return &authUsecase{userRepository: userRepository}
 }
 
 // サインアップ

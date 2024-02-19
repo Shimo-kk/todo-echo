@@ -4,7 +4,11 @@
 package schema
 
 import (
+	"fmt"
+	"net/http"
+
 	"github.com/labstack/echo/v4"
+	"github.com/oapi-codegen/runtime"
 )
 
 // CSRFModel defines model for CSRFModel.
@@ -30,6 +34,25 @@ type SignUpModel struct {
 	Password string `json:"password"`
 }
 
+// TaskCreateModel defines model for TaskCreateModel.
+type TaskCreateModel struct {
+	Title string `json:"title"`
+}
+
+// TaskReadModel defines model for TaskReadModel.
+type TaskReadModel struct {
+	DoneFlag bool   `json:"done_flag"`
+	Id       int    `json:"id"`
+	Title    string `json:"title"`
+	UserId   int    `json:"user_id"`
+}
+
+// TaskUpdateModel defines model for TaskUpdateModel.
+type TaskUpdateModel struct {
+	Id    int    `json:"id"`
+	Title string `json:"title"`
+}
+
 // UserReadModel defines model for UserReadModel.
 type UserReadModel struct {
 	Email string `json:"email"`
@@ -42,6 +65,12 @@ type SignInJSONRequestBody = SignInModel
 
 // SignUpJSONRequestBody defines body for SignUp for application/json ContentType.
 type SignUpJSONRequestBody = SignUpModel
+
+// CreateJSONRequestBody defines body for Create for application/json ContentType.
+type CreateJSONRequestBody = TaskCreateModel
+
+// UpdateJSONRequestBody defines body for Update for application/json ContentType.
+type UpdateJSONRequestBody = TaskUpdateModel
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
@@ -57,6 +86,24 @@ type ServerInterface interface {
 
 	// (POST /api/auth/signup)
 	SignUp(ctx echo.Context) error
+
+	// (POST /api/v1/task)
+	Create(ctx echo.Context) error
+
+	// (PUT /api/v1/task)
+	Update(ctx echo.Context) error
+
+	// (GET /api/v1/task/done/{id})
+	Done(ctx echo.Context, id int) error
+
+	// (DELETE /api/v1/task/{id})
+	Delete(ctx echo.Context, id int) error
+
+	// (GET /api/v1/task/{id})
+	Get(ctx echo.Context, id int) error
+
+	// (GET /api/v1/tasks)
+	GetAll(ctx echo.Context) error
 }
 
 // ServerInterfaceWrapper converts echo contexts to parameters.
@@ -100,6 +147,81 @@ func (w *ServerInterfaceWrapper) SignUp(ctx echo.Context) error {
 	return err
 }
 
+// Create converts echo context to params.
+func (w *ServerInterfaceWrapper) Create(ctx echo.Context) error {
+	var err error
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.Create(ctx)
+	return err
+}
+
+// Update converts echo context to params.
+func (w *ServerInterfaceWrapper) Update(ctx echo.Context) error {
+	var err error
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.Update(ctx)
+	return err
+}
+
+// Done converts echo context to params.
+func (w *ServerInterfaceWrapper) Done(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "id" -------------
+	var id int
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "id", runtime.ParamLocationPath, ctx.Param("id"), &id)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.Done(ctx, id)
+	return err
+}
+
+// Delete converts echo context to params.
+func (w *ServerInterfaceWrapper) Delete(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "id" -------------
+	var id int
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "id", runtime.ParamLocationPath, ctx.Param("id"), &id)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.Delete(ctx, id)
+	return err
+}
+
+// Get converts echo context to params.
+func (w *ServerInterfaceWrapper) Get(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "id" -------------
+	var id int
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "id", runtime.ParamLocationPath, ctx.Param("id"), &id)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.Get(ctx, id)
+	return err
+}
+
+// GetAll converts echo context to params.
+func (w *ServerInterfaceWrapper) GetAll(ctx echo.Context) error {
+	var err error
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetAll(ctx)
+	return err
+}
+
 // This is a simple interface which specifies echo.Route addition functions which
 // are present on both echo.Echo and echo.Group, since we want to allow using
 // either of them for path registration
@@ -132,5 +254,11 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.POST(baseURL+"/api/auth/signin", wrapper.SignIn)
 	router.GET(baseURL+"/api/auth/signout", wrapper.SignOut)
 	router.POST(baseURL+"/api/auth/signup", wrapper.SignUp)
+	router.POST(baseURL+"/api/v1/task", wrapper.Create)
+	router.PUT(baseURL+"/api/v1/task", wrapper.Update)
+	router.GET(baseURL+"/api/v1/task/done/:id", wrapper.Done)
+	router.DELETE(baseURL+"/api/v1/task/:id", wrapper.Delete)
+	router.GET(baseURL+"/api/v1/task/:id", wrapper.Get)
+	router.GET(baseURL+"/api/v1/tasks", wrapper.GetAll)
 
 }

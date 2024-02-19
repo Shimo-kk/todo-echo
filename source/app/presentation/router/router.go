@@ -6,6 +6,7 @@ import (
 	"todo/app/infrastructure/database/postgres"
 	"todo/app/infrastructure/repository"
 	"todo/app/presentation/controller"
+	v1router "todo/app/presentation/router/v1"
 	"todo/app/service/usecase"
 
 	echojwt "github.com/labstack/echo-jwt/v4"
@@ -63,4 +64,7 @@ func IncludeRouter(e *echo.Echo) {
 		SigningKey:  []byte(os.Getenv("JWT_KEY")),
 		TokenLookup: "cookie:token",
 	}))
+
+	// タスク関連
+	v1router.IncludeTaskRouter(db, v1)
 }

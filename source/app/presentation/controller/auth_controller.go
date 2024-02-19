@@ -19,7 +19,7 @@ type authController struct {
 
 // 認証コントローラーの作成
 func NewAuthController(usecase usecase.IAuthUsecase) *authController {
-	return &authController{usecase}
+	return &authController{usecase: usecase}
 }
 
 // CSRFトークンの取得

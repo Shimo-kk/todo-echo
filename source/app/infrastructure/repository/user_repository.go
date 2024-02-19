@@ -13,7 +13,7 @@ type userRepository struct {
 
 // ユーザーリポジトリの作成
 func NewUserRepository(db *gorm.DB) user.IUserRepositry {
-	return &userRepository{db}
+	return &userRepository{db: db}
 }
 
 // 挿入

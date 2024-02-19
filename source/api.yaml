@@ -7,7 +7,7 @@ paths:
     get:
       operationId: GetCsrfToken
       tags:
-        - api/auth
+        - auth
       responses:
         "200":
           description: OK
@@ -19,7 +19,7 @@ paths:
     post:
       operationId: SignUp
       tags:
-        - api/auth
+        - auth
       requestBody:
         content:
           application/json:
@@ -48,7 +48,7 @@ paths:
     post:
       operationId: SignIn
       tags:
-        - api/auth
+        - auth
       requestBody:
         content:
           application/json:
@@ -77,10 +77,170 @@ paths:
     get:
       operationId: SignOut
       tags:
-        - api/auth
+        - auth
       responses:
         "200":
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DefaultResponseModel"
+  /api/v1/task:
+    post:
+      operationId: Create
+      tags:
+        - v1/task
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TaskCreateModel"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskReadModel"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DefaultResponseModel"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DefaultResponseModel"
+    put:
+      operationId: Update
+      tags:
+        - v1/task
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TaskUpdateModel"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskReadModel"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DefaultResponseModel"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DefaultResponseModel"
+  /api/v1/task/done/{id}:
+    get:
+      operationId: Done
+      tags:
+        - v1/task
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskReadModel"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DefaultResponseModel"
+  /api/v1/task/{id}:
+    get:
+      operationId: Get
+      tags:
+        - v1/task
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskReadModel"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DefaultResponseModel"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DefaultResponseModel"
+    delete:
+      operationId: Delete
+      tags:
+        - v1/task
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DefaultResponseModel"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DefaultResponseModel"
+  /api/v1/tasks:
+    get:
+      operationId: GetAll
+      tags:
+        - v1/task
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TaskReadModel"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DefaultResponseModel"
+        "404":
+          description: Not Found
           content:
             application/json:
               schema:
@@ -131,6 +291,39 @@ components:
         - id
         - name
         - email
+    TaskCreateModel:
+      type: object
+      properties:
+        title:
+          type: string
+      required:
+        - title
+    TaskReadModel:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        title:
+          type: string
+        done_flag:
+          type: boolean
+      required:
+        - id
+        - user_id
+        - title
+        - done_flag
+    TaskUpdateModel:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+      required:
+        - id
+        - title
     DefaultResponseModel:
       type: object
       properties:
